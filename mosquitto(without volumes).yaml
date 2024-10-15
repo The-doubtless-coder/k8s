@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: mosquitto
+  labels: 
+    app: mosquitto
+spec: 
+  replicas: 1
+  selector: 
+    matchlabels: 
+      app: mosquitto
+  template: 
+    metadata: 
+      labels: 
+        app: mosquitto
+    spec: #pod spec#conf inside a conf
+      containers: 
+        - name: mosquitto
+          image: eclipse-mosquitto:1.6.2
+          ports: 
+            - containerPort: 1883
+          volumeMounts: 
+            - name: mosquitto-config
+              mountPath: /mosquitto/conf
+            - name: mosquitto-secret
+              mountPath: /mosquitto/secret
+      volumes: 
+        - name: mosquitto-config
+          configMap:
+            name: mosquitto-config-file
+        - name: mosquitto-secret
+          secret: 
+            secretName: mosquitto-secret-file
